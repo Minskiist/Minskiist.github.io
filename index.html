@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minna Purkunen — Real-time Systems for Live Visuals</title>
+<meta name="description" content="AI Workflow Designer and generative video artist. Real-time interactive audiovisual systems in TouchDesigner.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0b;
+  --bg-2:#111114;
+  --ink:#f4f2ee;
+  --ink-dim:#8c8a86;
+  --line:#232327;
+  --acc:#ff5a1f;      /* electric orange */
+  --acc-2:#8b5cf6;    /* violet */
+  --max:1400px;
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(14px);background:rgba(10,10,11,.55);
+  border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
+}
+nav.stuck{border-bottom-color:var(--line);background:rgba(10,10,11,.85)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:16px var(--pad);
+  display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{font-weight:900;letter-spacing:-.03em;font-size:1.05rem}
+.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:.82rem;font-weight:500;color:var(--ink-dim);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.lang{display:flex;border:1px solid var(--line);border-radius:100px;overflow:hidden}
+.lang button{
+  background:none;border:0;color:var(--ink-dim);cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;
+  padding:6px 12px;transition:.2s}
+.lang button.on{background:var(--ink);color:var(--bg)}
+.burger{display:none;background:none;border:0;color:var(--ink);font-size:1.4rem;cursor:pointer}
+
+/* ---------- HERO ---------- */
+header{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-media{position:absolute;inset:0;z-index:0}
+.hero-media canvas{width:100%;height:100%;display:block;opacity:.55}
+.hero-media::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(90% 70% at 70% 25%, rgba(139,92,246,.22), transparent 60%),
+    linear-gradient(to top, var(--bg) 4%, rgba(10,10,11,.35) 55%, rgba(10,10,11,.75) 100%);
+}
+.hero-in{position:relative;z-index:2;width:100%;padding-bottom:clamp(48px,7vw,88px);padding-top:140px}
+.eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 14px var(--acc);
+  animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+h1{
+  font-size:clamp(2.9rem,8.4vw,7.4rem);
+  line-height:.94;letter-spacing:-.045em;font-weight:800;
+  max-width:16ch;text-wrap:balance;
+}
+h1 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:-.01em}
+.hero-sub{
+  margin-top:32px;max-width:52ch;font-size:clamp(1rem,1.5vw,1.22rem);
+  color:#c9c6c0;line-height:1.5
+}
+.hero-meta{
+  margin-top:44px;padding-top:24px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:14px 40px;align-items:baseline
+}
+.hero-meta div{display:flex;flex-direction:column;gap:4px}
+.hero-meta b{font-size:.95rem;font-weight:600}
+
+/* ---------- SECTION ---------- */
+section{padding:clamp(80px,11vw,160px) 0;position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;
+  gap:30px;margin-bottom:clamp(38px,5vw,64px);flex-wrap:wrap}
+h2{font-size:clamp(2rem,4.6vw,3.7rem);line-height:1.02;letter-spacing:-.035em;font-weight:800;max-width:18ch}
+h2 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--acc)}
+.sec-note{max-width:38ch;color:var(--ink-dim);font-size:.95rem}
+
+/* ---------- WORK ---------- */
+.work{display:grid;gap:2px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.proj{
+  background:var(--bg);padding:clamp(24px,3vw,40px) 0;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  gap:clamp(24px,4vw,64px);align-items:center;
+  transition:background .35s;cursor:pointer;position:relative
+}
+.proj:hover{background:var(--bg-2)}
+.proj-txt{padding-left:clamp(0px,2vw,28px)}
+.proj-idx{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--acc);letter-spacing:.14em}
+.proj h3{font-size:clamp(1.5rem,2.9vw,2.5rem);line-height:1.04;letter-spacing:-.03em;
+  font-weight:700;margin:14px 0 14px}
+.proj p{color:var(--ink-dim);max-width:44ch;font-size:.97rem}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:.63rem;letter-spacing:.08em;
+  border:1px solid var(--line);border-radius:100px;padding:5px 11px;color:var(--ink-dim)}
+.proj-media{
+  aspect-ratio:16/10;background:var(--bg-2);border:1px solid var(--line);
+  position:relative;overflow:hidden;display:grid;place-items:center
+}
+.proj-media::before{
+  content:"";position:absolute;inset:0;opacity:.5;
+  background:linear-gradient(125deg,var(--acc) 0%,transparent 45%,var(--acc-2) 100%);
+  filter:blur(40px);transform:scale(1.4);transition:transform .8s ease,opacity .5s
+}
+.proj:hover .proj-media::before{transform:scale(1.75) rotate(8deg);opacity:.72}
+.ph{position:relative;z-index:1;text-align:center;color:rgba(255,255,255,.62)}
+.ph span{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em}
+.proj-media video,.proj-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+
+/* ---------- CAPABILITIES ---------- */
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line)}
+.cap{background:var(--bg);padding:clamp(26px,3vw,40px);transition:background .3s}
+.cap:hover{background:var(--bg-2)}
+.cap .n{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--acc);letter-spacing:.14em}
+.cap h4{font-size:1.22rem;font-weight:700;letter-spacing:-.02em;margin:16px 0 12px}
+.cap p{color:var(--ink-dim);font-size:.93rem}
+
+/* ---------- METHOD ---------- */
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(24px,3vw,48px);
+  counter-reset:m}
+.m{border-top:2px solid var(--acc);padding-top:22px}
+.m:nth-child(2){border-color:var(--acc-2)}
+.m:nth-child(3){border-color:var(--ink-dim)}
+.m h4{font-size:1.12rem;font-weight:700;margin-bottom:10px;letter-spacing:-.02em}
+.m p{color:var(--ink-dim);font-size:.92rem}
+
+/* ---------- BACKGROUND ---------- */
+.bg-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:clamp(30px,5vw,80px);align-items:start}
+.tl{border-left:1px solid var(--line);padding-left:clamp(20px,2.5vw,34px)}
+.tl-item{position:relative;padding-bottom:34px}
+.tl-item::before{content:"";position:absolute;left:calc(-1*clamp(20px,2.5vw,34px) - 4px);top:8px;
+  width:7px;height:7px;border-radius:50%;background:var(--ink-dim)}
+.tl-item:first-child::before{background:var(--acc);box-shadow:0 0 12px var(--acc)}
+.tl-item .yr{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--acc);letter-spacing:.12em}
+.tl-item h4{font-size:1.08rem;font-weight:700;margin:8px 0 7px;letter-spacing:-.02em}
+.tl-item p{color:var(--ink-dim);font-size:.92rem;max-width:46ch}
+.pull{font-family:'Instrument Serif',serif;font-style:italic;
+  font-size:clamp(1.5rem,3vw,2.5rem);line-height:1.22;letter-spacing:-.02em;color:var(--ink)}
+.pull b{font-style:normal;font-family:'Archivo';font-weight:800;color:var(--acc)}
+
+/* ---------- CONTACT ---------- */
+#contact{border-top:1px solid var(--line)}
+.cta h2{max-width:22ch}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+.btn{
+  border:1px solid var(--line);border-radius:100px;padding:13px 26px;
+  font-size:.9rem;font-weight:600;transition:.25s;display:inline-flex;align-items:center;gap:9px
+}
+.btn:hover{border-color:var(--ink);transform:translateY(-2px)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#0a0a0b}
+.btn.pri:hover{box-shadow:0 10px 40px rgba(255,90,31,.32)}
+footer{border-top:1px solid var(--line);padding:30px 0;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ---------- REVEAL ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- LANG ---------- */
+[data-en]{display:none}
+html[lang="en"] [data-fi]{display:none}
+html[lang="en"] [data-en]{display:revert}
+
+@media(max-width:860px){
+  .nav-links{display:none}
+  .proj{grid-template-columns:1fr}
+  .proj-txt{order:2;padding-left:0}
+  .proj-media{order:1}
+  .bg-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-in">
+    <a href="#" class="logo">MINNA PURKUNEN<span>.</span></a>
+    <div class="nav-links">
+      <a href="#work"><span data-fi>Työt</span><span data-en>Work</span></a>
+      <a href="#systems"><span data-fi>Osaaminen</span><span data-en>Systems</span></a>
+      <a href="#method"><span data-fi>Työtapa</span><span data-en>Method</span></a>
+      <a href="#about"><span data-fi>Tausta</span><span data-en>Background</span></a>
+      <a href="#contact"><span data-fi>Yhteys</span><span data-en>Contact</span></a>
+    </div>
+    <div class="lang">
+      <button id="fi" class="on">FI</button><button id="en">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header>
+  <div class="hero-media"><canvas id="flow"></canvas></div>
+  <div class="hero-in wrap">
+    <div class="eyebrow"><span class="dot"></span>
+      <span class="mono" data-fi>Ylöjärvi, Suomi · Vapaana projekteihin</span>
+      <span class="mono" data-en>Ylöjärvi, Finland · Available for projects</span>
+    </div>
+
+    <h1>
+      <span data-fi>Reaaliaikaisia <em>järjestelmiä</em>, jotka reagoivat kehoon ja ääneen.</span>
+      <span data-en>Real-time <em>systems</em> that respond to body and sound.</span>
+    </h1>
+
+    <p class="hero-sub">
+      <span data-fi>Rakennan interaktiivisia audiovisuaalisia järjestelmiä TouchDesignerilla: eleohjausta, nestesimulaatioita ja generatiivista kuvaa, joka syntyy livenä esityksen aikana. Taustalla 20 vuotta lääketieteellistä kuvantamista ja terveysteknologian YAMK.</span>
+      <span data-en>I build interactive audiovisual systems in TouchDesigner: gesture control, fluid simulation and generative imagery that is composed live, on stage. Behind it, twenty years of medical imaging and a Master's in health technology.</span>
+    </p>
+
+    <div class="hero-meta">
+      <div><span class="mono" data-fi>Erikoisala</span><span class="mono" data-en>Focus</span>
+        <b>TouchDesigner · MediaPipe · T3D</b></div>
+      <div><span class="mono" data-fi>Rooli</span><span class="mono" data-en>Role</span>
+        <b data-fi>AI Workflow Designer</b><b data-en>AI Workflow Designer</b></div>
+      <div><span class="mono" data-fi>Palvelen</span><span class="mono" data-en>Working with</span>
+        <b data-fi>Artistit · AV-tuotanto · Näyttelyt</b><b data-en>Artists · AV production · Exhibitions</b></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ WORK ============ -->
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2><span data-fi>Valittuja <em>teoksia</em></span><span data-en>Selected <em>work</em></span></h2>
+      <p class="sec-note">
+        <span data-fi>Jokainen projekti on toimiva järjestelmä, ei renderöity video. Ne ajetaan livenä ja reagoivat esiintyjään. Yhteistyöprojektit esitellään ilman artistien nimiä.</span>
+        <span data-en>Each project is a working system, not a rendered video. They run live and respond to the performer. Collaborations are shown without naming the artists.</span>
+      </p>
+    </div>
+
+    <div class="work">
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">01 / <span data-fi>KÄYNNISSÄ</span><span data-en>IN PROGRESS</span></span>
+          <h3>Double Exposure</h3>
+          <p>
+            <span data-fi>Reaaliaikainen kaksoisvalotus, jossa MediaPipe-segmentointi irrottaa kehon kuvasta ja syöttää sen volumetriseen nestesimulaatioon. Keho ei ole kuva vaan voima, joka työntää nestettä.</span>
+            <span data-en>A real-time double exposure where MediaPipe segmentation lifts the body out of the frame and feeds it into a volumetric fluid simulation. The body is not an image, it is a force pushing through liquid.</span>
+          </p>
+          <div class="tags"><span class="tag">TouchDesigner</span><span class="tag">MediaPipe Segmentation</span><span class="tag">T3D Fluid</span><span class="tag">Volumetric</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">02 / <span data-fi>LIVE-ESITYS</span><span data-en>LIVE PERFORMANCE</span></span>
+          <h3>Seed of Light</h3>
+          <p>
+            <span data-fi>Esitysjärjestelmä, joka on rakennettu yhden kappaleen ympärille. Rytmi arpoo uuden siemenluvun, kämmenele ohittaa satunnaisuuden. Esiintyjä ohjaa visuaalin liikkeellään, ei kukaan miksaripöydän takana.</span>
+            <span data-en>A performance system built around a single track. The rhythm draws a new random seed, an open palm overrides it. The performer steers the visuals with their own movement, not an operator at a desk.</span>
+          </p>
+          <div class="tags"><span class="tag">Audio-reactive</span><span class="tag">Gesture Override</span><span class="tag">Live Performance</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">03 / <span data-fi>JÄRJESTELMÄ</span><span data-en>FRAMEWORK</span></span>
+          <h3>Gesture Control Framework</h3>
+          <p>
+            <span data-fi>1 724 noden verkko, jossa koko MIDI-ohjaus korvattiin kehon liikkeellä. Syntyi uudelleenkäytettävä protokolla: miten mikä tahansa TouchDesigner-parametri kytketään eleeseen ilman että kanavat häiritsevät toisiaan.</span>
+            <span data-en>A 1,724-node network where the entire MIDI control layer was replaced by body movement. It produced a reusable protocol: how to bind any TouchDesigner parameter to a gesture without channels bleeding into each other.</span>
+          </p>
+          <div class="tags"><span class="tag">Pose + Hand Tracking</span><span class="tag">Crosstalk Prevention</span><span class="tag">Open Documentation</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span>[ NODE NETWORK / DIAGRAM ]</span></div></div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">04 / <span data-fi>AUTOMAATIO</span><span data-en>AUTOMATION</span></span>
+          <h3>Weather-Driven Generative Video</h3>
+          <p>
+            <span data-fi>Helsingin säädata ja liikennedata ohjaavat abstraktin nesteanimaation liikettä. n8n hakee datan, kielimalli kääntää sen liikekehotteeksi, ComfyUI renderöi. Järjestelmä tuottaa uutta kuvaa ilman minua.</span>
+            <span data-en>Helsinki weather and traffic data drive the motion of an abstract liquid animation. n8n pulls the data, a language model turns it into a motion prompt, ComfyUI renders. The system keeps producing without me.</span>
+          </p>
+          <div class="tags"><span class="tag">n8n</span><span class="tag">ComfyUI API</span><span class="tag">Open Data</span><span class="tag">Docker</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">05 / <span data-fi>MUSIIKKIVIDEO</span><span data-en>MUSIC VIDEO</span></span>
+          <h3><span data-fi>Musiikkivideo artistille</span><span data-en>Music Video</span></h3>
+          <p>
+            <span data-fi>Dystooppinen neonkaupunki, feeniks ja korttipakka. Artistista koulutettiin LoRA-malli, joka muuttui videon päähenkilöksi. Tarina kulkee kaupungin ahdingosta järjestelmän kaatumiseen.</span>
+            <span data-en>A dystopian neon city, a phoenix and a deck of cards. A LoRA model was trained on the artist and became the film's alter ego. The story moves from urban struggle to the collapse of a controlling system.</span>
+          </p>
+          <div class="tags"><span class="tag">LoRA Training</span><span class="tag">Wan / Hunyuan</span><span class="tag">Narrative</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ SYSTEMS ============ -->
+<section id="systems">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2><span data-fi>Mitä <em>rakennan</em></span><span data-en>What I <em>build</em></span></h2>
+      <p class="sec-note">
+        <span data-fi>Suomessa on vain kourallinen tekijöitä, jotka yhdistävät reaaliaikaisen TouchDesignerin ja generatiivisen tekoälyn samaan tuotantoketjuun.</span>
+        <span data-en>In Finland only a handful of people combine real-time TouchDesigner and generative AI in one production chain.</span>
+      </p>
+    </div>
+
+    <div class="caps rv">
+      <div class="cap"><span class="n">01</span>
+        <h4><span data-fi>Eleohjatut esitysjärjestelmät</span><span data-en>Gesture-Controlled Performance</span></h4>
+        <p><span data-fi>Esiintyjä ohjaa visuaalia kehollaan. Kämmen, ranteen nopeus, käsien etäisyys ja pään liike kytkettynä mihin tahansa parametriin, luotettavasti myös keikkaolosuhteissa.</span>
+        <span data-en>The performer drives the visuals with their body. Palm, wrist velocity, hand distance and head movement bound to any parameter, reliable under stage conditions.</span></p></div>
+
+      <div class="cap"><span class="n">02</span>
+        <h4><span data-fi>Audioreaktiivinen generatiivinen kuva</span><span data-en>Audio-Reactive Generative Imagery</span></h4>
+        <p><span data-fi>Beat-analyysi, taajuuskaistat ja rytmi ohjaamassa hiukkasia, nestettä ja volumetrista valoa. Kuva syntyy kappaleen mukana, ei sen päälle leikattuna.</span>
+        <span data-en>Beat analysis, frequency bands and rhythm driving particles, fluid and volumetric light. The image is born with the track, not cut on top of it.</span></p></div>
+
+      <div class="cap"><span class="n">03</span>
+        <h4><span data-fi>AI-videoputket</span><span data-en>AI Video Pipelines</span></h4>
+        <p><span data-fi>ComfyUI-workflowt, LoRA-koulutus, video-mallit ja n8n-automaatio yhdeksi ketjuksi. Konsepti, joka tuottaa sisältöä toistettavasti, ei yksittäisiä onnenkantamoisia.</span>
+        <span data-en>ComfyUI workflows, LoRA training, video models and n8n automation as one chain. A concept that produces content repeatably, not one-off lucky renders.</span></p></div>
+
+      <div class="cap"><span class="n">04</span>
+        <h4><span data-fi>Interaktiiviset installaatiot</span><span data-en>Interactive Installations</span></h4>
+        <p><span data-fi>Kävijä astuu kuvaan ja teos muuttuu. Kamerapohjainen seuranta ilman pukuja tai antureita, tavallisella webkameralla.</span>
+        <span data-en>A visitor steps into the frame and the piece changes. Camera-based tracking with no suits or sensors, just a webcam.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2><span data-fi>Miten <em>työskentelen</em></span><span data-en>How I <em>work</em></span></h2>
+      <p class="sec-note">
+        <span data-fi>Olen avoin siitä, että käytän tekoälyä työkaluna. Panokseni on visio, suunta ja arvostelukyky siitä mikä toimii.</span>
+        <span data-en>I am open about using AI as a tool. My contribution is vision, direction and the judgement of what actually works.</span>
+      </p>
+    </div>
+
+    <div class="method rv">
+      <div class="m">
+        <h4><span data-fi>Auditoi ennen kuin rakennat</span><span data-en>Audit before you build</span></h4>
+        <p><span data-fi>Verkko kartoitetaan ennen yhtäkään muutosta. Yksi kanava, yksi ongelma kerrallaan, tallennus jokaisen askeleen jälkeen.</span>
+        <span data-en>The network is mapped before a single change. One channel, one problem at a time, saved after every step.</span></p>
+      </div>
+      <div class="m">
+        <h4><span data-fi>Kolmiportainen AI-työnkulku</span><span data-en>Three-tier AI workflow</span></h4>
+        <p><span data-fi>Keskustelu-AI arkkitehtuuriin, Claude Code MCP:n kautta massaoperaatioihin, paikallinen malli pikkutehtäviin. Taiteelliset päätökset teen itse.</span>
+        <span data-en>Chat AI for architecture, Claude Code over MCP for bulk operations, a local model for small tasks. The artistic calls stay mine.</span></p>
+      </div>
+      <div class="m">
+        <h4><span data-fi>Nopea kierto, sitten hionta</span><span data-en>Fast loop, then refinement</span></h4>
+        <p><span data-fi>Jotain toimivaa ruudulle heti, sen jälkeen viilaus. Vanhat ohjaimet pidetään rinnalla elossa, jotta keikka ei kaadu uuteen ominaisuuteen.</span>
+        <span data-en>Something working on screen immediately, refinement after. Old controls stay alive in parallel so a new feature never takes down the show.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap bg-grid">
+    <div class="rv">
+      <h2 style="margin-bottom:28px"><span data-fi>Epätavallinen <em>reitti</em></span><span data-en>An unusual <em>route</em></span></h2>
+      <p class="pull">
+        <span data-fi>Kaksikymmentä vuotta kuvasin ihmiskehon sisään. Nyt teen kehosta <b>ohjaimen</b>.</span>
+        <span data-en>For twenty years I imaged the inside of the human body. Now I turn the body into a <b>controller</b>.</span>
+      </p>
+      <p style="margin-top:28px;color:var(--ink-dim);max-width:44ch">
+        <span data-fi>Sama tarkkuus, jolla luetaan magneettikuvaa, siirtyy signaaliketjun jäljittämiseen. Sama vastuu, jolla hoidetaan potilasta, siirtyy siihen että keikka ei kaadu.</span>
+        <span data-en>The same precision used to read an MRI transfers to tracing a signal chain. The same responsibility used in patient care transfers to making sure the show does not go down.</span>
+      </p>
+    </div>
+
+    <div class="tl rv">
+      <div class="tl-item"><span class="yr">2024 →</span>
+        <h4><span data-fi>Generatiivinen videotaide ja AI-järjestelmät</span><span data-en>Generative video art and AI systems</span></h4>
+        <p><span data-fi>TouchDesigner, ComfyUI, reaaliaikaiset esitysjärjestelmät. Yhteistyötä artistien kanssa, oma taiteellinen tuotanto.</span>
+        <span data-en>TouchDesigner, ComfyUI, real-time performance systems. Collaborations with artists alongside my own artistic practice.</span></p></div>
+
+      <div class="tl-item"><span class="yr">2023 →</span>
+        <h4><span data-fi>AI-kouluttaja ja kurssien tekijä</span><span data-en>AI educator and course creator</span></h4>
+        <p><span data-fi>Midjourney-verkkokurssi ja kirja, SREF-koodikirjasto, prompt-menetelmien opetus.</span>
+        <span data-en>A Midjourney online course and book, an SREF code library, teaching prompt methodology.</span></p></div>
+
+      <div class="tl-item"><span class="yr">YAMK</span>
+        <h4><span data-fi>Terveysteknologia, ylempi AMK</span><span data-en>Health technology, Master's degree</span></h4>
+        <p><span data-fi>Projektinhallinta, MDR-sääntely, saavutettavuus. Osaaminen, joka kantaa myös tuotantoprojekteissa.</span>
+        <span data-en>Project management, MDR regulation, accessibility. Skills that carry over into production work.</span></p></div>
+
+      <div class="tl-item"><span class="yr">20 v</span>
+        <h4><span data-fi>Röntgenhoitaja</span><span data-en>Radiographer</span></h4>
+        <p><span data-fi>Kaksikymmentä vuotta lääketieteellistä kuvantamista, siitä yli kymmenen magneettikuvauksessa. Vaativaa laitteistoa, tiukkoja protokollia, ihmisiä.</span>
+        <span data-en>Twenty years in medical imaging, more than ten of them in MRI. Demanding hardware, strict protocols, people.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="wrap cta rv">
+    <h2><span data-fi>Etsitkö jotain, mitä <em>kukaan muu ei tee?</em></span><span data-en>Looking for something <em>nobody else is doing?</em></span></h2>
+    <p class="sec-note" style="max-width:46ch;margin-top:22px">
+      <span data-fi>Otan vastaan keikkavisuaaleja, installaatioita, yhteistyötä artistien kanssa ja AI-työnkulkujen suunnittelua.</span>
+      <span data-en>Open to tour visuals, installations, artist collaborations and AI workflow design.</span>
+    </p>
+    <div class="links">
+      <a class="btn pri" href="mailto:minnan.alycorner@gmail.com">minnan.alycorner@gmail.com</a>
+      <a class="btn" href="https://www.linkedin.com/in/minna-purkunen-853641170" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="https://github.com/Minskiist" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+  <div class="wrap"><footer>
+    <span class="mono">© 2026 Minna Purkunen</span>
+    <span class="mono" data-fi>Rakennettu TouchDesignerilla, koodilla ja itsepäisyydellä</span>
+    <span class="mono" data-en>Built with TouchDesigner, code and stubbornness</span>
+  </footer></div>
+</section>
+
+<script>
+/* ---- language ---- */
+const setLang = l => {
+  document.documentElement.lang = l;
+  fi.classList.toggle('on', l==='fi');
+  en.classList.toggle('on', l==='en');
+};
+fi.onclick = ()=>setLang('fi');
+en.onclick = ()=>setLang('en');
+
+/* ---- nav shadow ---- */
+addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('stuck',scrollY>40));
+
+/* ---- reveal ---- */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(e=>io.observe(e));
+
+/* ---- hero: flow field (placeholder for the real video loop) ---- */
+const c = document.getElementById('flow'), x = c.getContext('2d');
+let W,H,P=[];
+const R = (a,b)=>a+Math.random()*(b-a);
+function size(){
+  W=c.width=innerWidth*devicePixelRatio; H=c.height=innerHeight*devicePixelRatio;
+  P=[]; const n = innerWidth<700?420:1100;
+  for(let i=0;i<n;i++)P.push({x:R(0,W),y:R(0,H),v:R(.4,1.6),l:R(0,260)});
+}
+size(); addEventListener('resize',size);
+let t=0;
+function field(px,py){
+  const s=.0016;
+  return Math.sin(px*s+t)*1.6 + Math.cos(py*s*1.3-t*.7)*1.6 + Math.sin((px+py)*s*.5+t*.4)*1.2;
+}
+(function loop(){
+  x.fillStyle='rgba(10,10,11,.055)'; x.fillRect(0,0,W,H);
+  x.lineWidth=1.1*devicePixelRatio;
+  for(const p of P){
+    const a=field(p.x,p.y);
+    const nx=p.x+Math.cos(a)*p.v*2.4*devicePixelRatio;
+    const ny=p.y+Math.sin(a)*p.v*2.4*devicePixelRatio;
+    const hue = 18 + (p.y/H)*250;
+    x.strokeStyle=`hsla(${hue},95%,62%,.22)`;
+    x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(nx,ny); x.stroke();
+    p.x=nx; p.y=ny; p.l--;
+    if(p.l<0||p.x<0||p.x>W||p.y<0||p.y>H){p.x=R(0,W);p.y=R(0,H);p.l=R(60,260)}
+  }
+  t+=.0022;
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
