@@ -72,8 +72,8 @@ nav.stuck{border-bottom-color:var(--line);background:rgba(10,10,11,.85)}
 
 /* ---------- HERO ---------- */
 header{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
-.hero-media{position:absolute;inset:0;z-index:0}
-.hero-media canvas{width:100%;height:100%;display:block;opacity:.55}
+.hero-media{position:absolute;inset:0;z-index:0;background:#000}
+.hero-media video{width:100%;height:100%;display:block;object-fit:cover;opacity:.72}
 .hero-media::after{
   content:"";position:absolute;inset:0;
   background:
@@ -225,7 +225,9 @@ html[lang="en"] [data-en]{display:revert}
 
 <!-- ============ HERO ============ -->
 <header>
-  <div class="hero-media"><canvas id="flow"></canvas></div>
+  <div class="hero-media">
+    <video src="media/hero.mp4" poster="media/hero.jpg" autoplay muted loop playsinline></video>
+  </div>
   <div class="hero-in wrap">
     <div class="eyebrow"><span class="dot"></span>
       <span class="mono" data-fi>Ylöjärvi, Suomi · Vapaana projekteihin</span>
@@ -268,33 +270,65 @@ html[lang="en"] [data-en]{display:revert}
 
       <article class="proj rv">
         <div class="proj-txt">
-          <span class="proj-idx">01 / <span data-fi>KÄYNNISSÄ</span><span data-en>IN PROGRESS</span></span>
-          <h3>Double Exposure</h3>
+          <span class="proj-idx">01 / <span data-fi>ESITYSJÄRJESTELMÄ</span><span data-en>PERFORMANCE SYSTEM</span></span>
+          <h3>Body as Signal</h3>
           <p>
-            <span data-fi>Reaaliaikainen kaksoisvalotus, jossa MediaPipe-segmentointi irrottaa kehon kuvasta ja syöttää sen volumetriseen nestesimulaatioon. Keho ei ole kuva vaan voima, joka työntää nestettä.</span>
-            <span data-en>A real-time double exposure where MediaPipe segmentation lifts the body out of the frame and feeds it into a volumetric fluid simulation. The body is not an image, it is a force pushing through liquid.</span>
+            <span data-fi>3D-objekti hajotetaan hiukkasiksi, joita ohjaavat yhtä aikaa musiikki ja kehon liike. Ei jälkikäsittelyä, ei renderöintijonoa. Se mitä näet, syntyy sillä hetkellä kun liikun.</span>
+            <span data-en>A 3D object dissolved into particles, driven at once by music and body movement. No post-processing, no render queue. What you see is made in the moment I move.</span>
           </p>
-          <div class="tags"><span class="tag">TouchDesigner</span><span class="tag">MediaPipe Segmentation</span><span class="tag">T3D Fluid</span><span class="tag">Volumetric</span></div>
+          <div class="tags"><span class="tag">TouchDesigner</span><span class="tag">MediaPipe Pose</span><span class="tag">Particles</span><span class="tag">Audio-reactive</span></div>
         </div>
-        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+        <div class="proj-media">
+          <video data-src="media/body-as-signal.mp4" poster="media/body-as-signal.jpg" muted loop playsinline preload="none"></video>
+        </div>
       </article>
 
       <article class="proj rv">
         <div class="proj-txt">
-          <span class="proj-idx">02 / <span data-fi>LIVE-ESITYS</span><span data-en>LIVE PERFORMANCE</span></span>
+          <span class="proj-idx">02 / <span data-fi>NÄYTTELY</span><span data-en>EXHIBITION</span></span>
+          <h3><span data-fi>Värähtelevä Kajo</span><span data-en>Oscillating Glow</span></h3>
+          <p>
+            <span data-fi>Näyttelyn liikkuva sisältö syntyi automaattisesti työhuoneellani Helsingin oikeasta säädatasta, puolen tunnin viiveellä. Sää muuttui, teos muuttui. Esillä Citycenter LUX, Helsinki.</span>
+            <span data-en>The moving content for this exhibition was generated automatically in my studio from live Helsinki weather data on a thirty minute delay. The weather changed, the work changed. Shown at Citycenter LUX, Helsinki.</span>
+          </p>
+          <div class="tags"><span class="tag">n8n</span><span class="tag">ComfyUI API</span><span class="tag">Open Weather Data</span><span class="tag">Unattended Pipeline</span></div>
+        </div>
+        <div class="proj-media">
+          <video data-src="media/oscillating-glow.mp4" poster="media/oscillating-glow.jpg" muted loop playsinline preload="none"></video>
+        </div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">03 / <span data-fi>LIVE-ESITYS</span><span data-en>LIVE PERFORMANCE</span></span>
           <h3>Seed of Light</h3>
           <p>
-            <span data-fi>Esitysjärjestelmä, joka on rakennettu yhden kappaleen ympärille. Rytmi arpoo uuden siemenluvun, kämmenele ohittaa satunnaisuuden. Esiintyjä ohjaa visuaalin liikkeellään, ei kukaan miksaripöydän takana.</span>
-            <span data-en>A performance system built around a single track. The rhythm draws a new random seed, an open palm overrides it. The performer steers the visuals with their own movement, not an operator at a desk.</span>
+            <span data-fi>Esitysjärjestelmä, joka on rakennettu yhden kappaleen ympärille. Rytmi arpoo uuden siemenluvun 16 iskun välein, kämmenele ohittaa satunnaisuuden. Esiintyjä ohjaa visuaalin liikkeellään, ei kukaan miksaripöydän takana.</span>
+            <span data-en>A performance system built around a single track. The rhythm draws a new random seed every sixteen beats, an open palm overrides it. The performer steers the visuals with their own movement, not an operator at a desk.</span>
           </p>
-          <div class="tags"><span class="tag">Audio-reactive</span><span class="tag">Gesture Override</span><span class="tag">Live Performance</span></div>
+          <div class="tags"><span class="tag">Audio-reactive</span><span class="tag">Gesture Override</span><span class="tag">No Postprocessing</span></div>
         </div>
-        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+        <div class="proj-media">
+          <video data-src="media/seed-of-light.mp4" poster="media/seed-of-light.jpg" muted loop playsinline preload="none"></video>
+        </div>
       </article>
 
       <article class="proj rv">
         <div class="proj-txt">
-          <span class="proj-idx">03 / <span data-fi>JÄRJESTELMÄ</span><span data-en>FRAMEWORK</span></span>
+          <span class="proj-idx">04 / <span data-fi>TEKEILLÄ</span><span data-en>IN PROGRESS</span></span>
+          <h3>Double Exposure</h3>
+          <p>
+            <span data-fi>Reaaliaikainen kaksoisvalotus, jossa MediaPipe-segmentointi irrottaa kehon kuvasta ja syöttää sen volumetriseen nestesimulaatioon. Keho ei ole kuva vaan voima, joka työntää nestettä. Demo tulossa.</span>
+            <span data-en>A real-time double exposure where MediaPipe segmentation lifts the body out of the frame and feeds it into a volumetric fluid simulation. The body is not an image, it is a force pushing through liquid. Demo coming.</span>
+          </p>
+          <div class="tags"><span class="tag">MediaPipe Segmentation</span><span class="tag">T3D Fluid</span><span class="tag">Volumetric</span></div>
+        </div>
+        <div class="proj-media"><div class="ph"><span data-fi>[ DEMO TULOSSA ]</span><span data-en>[ DEMO COMING ]</span></div></div>
+      </article>
+
+      <article class="proj rv">
+        <div class="proj-txt">
+          <span class="proj-idx">05 / <span data-fi>JÄRJESTELMÄ</span><span data-en>FRAMEWORK</span></span>
           <h3>Gesture Control Framework</h3>
           <p>
             <span data-fi>1 724 noden verkko, jossa koko MIDI-ohjaus korvattiin kehon liikkeellä. Syntyi uudelleenkäytettävä protokolla: miten mikä tahansa TouchDesigner-parametri kytketään eleeseen ilman että kanavat häiritsevät toisiaan.</span>
@@ -302,33 +336,24 @@ html[lang="en"] [data-en]{display:revert}
           </p>
           <div class="tags"><span class="tag">Pose + Hand Tracking</span><span class="tag">Crosstalk Prevention</span><span class="tag">Open Documentation</span></div>
         </div>
-        <div class="proj-media"><div class="ph"><span>[ NODE NETWORK / DIAGRAM ]</span></div></div>
-      </article>
-
-      <article class="proj rv">
-        <div class="proj-txt">
-          <span class="proj-idx">04 / <span data-fi>AUTOMAATIO</span><span data-en>AUTOMATION</span></span>
-          <h3>Weather-Driven Generative Video</h3>
-          <p>
-            <span data-fi>Helsingin säädata ja liikennedata ohjaavat abstraktin nesteanimaation liikettä. n8n hakee datan, kielimalli kääntää sen liikekehotteeksi, ComfyUI renderöi. Järjestelmä tuottaa uutta kuvaa ilman minua.</span>
-            <span data-en>Helsinki weather and traffic data drive the motion of an abstract liquid animation. n8n pulls the data, a language model turns it into a motion prompt, ComfyUI renders. The system keeps producing without me.</span>
-          </p>
-          <div class="tags"><span class="tag">n8n</span><span class="tag">ComfyUI API</span><span class="tag">Open Data</span><span class="tag">Docker</span></div>
+        <div class="proj-media">
+          <video data-src="media/gesture-framework.mp4" poster="media/gesture-framework.jpg" muted loop playsinline preload="none"></video>
         </div>
-        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
       </article>
 
       <article class="proj rv">
         <div class="proj-txt">
-          <span class="proj-idx">05 / <span data-fi>MUSIIKKIVIDEO</span><span data-en>MUSIC VIDEO</span></span>
-          <h3><span data-fi>Musiikkivideo artistille</span><span data-en>Music Video</span></h3>
+          <span class="proj-idx">06 / <span data-fi>MUSIIKKIVIDEO</span><span data-en>MUSIC VIDEO</span></span>
+          <h3>Värisuora</h3>
           <p>
-            <span data-fi>Dystooppinen neonkaupunki, feeniks ja korttipakka. Artistista koulutettiin LoRA-malli, joka muuttui videon päähenkilöksi. Tarina kulkee kaupungin ahdingosta järjestelmän kaatumiseen.</span>
-            <span data-en>A dystopian neon city, a phoenix and a deck of cards. A LoRA model was trained on the artist and became the film's alter ego. The story moves from urban struggle to the collapse of a controlling system.</span>
+            <span data-fi>Dystooppinen neonkaupunki, feeniks ja korttipakka. Päähenkilö on LoRA-mallilla luotu fiktiivinen alter ego. Tarina kulkee kaupungin ahdingosta järjestelmän kaatumiseen.</span>
+            <span data-en>A dystopian neon city, a phoenix and a deck of cards. The lead is a fictional alter ego built with a trained LoRA model. The story moves from urban struggle to the collapse of a controlling system.</span>
           </p>
           <div class="tags"><span class="tag">LoRA Training</span><span class="tag">Wan / Hunyuan</span><span class="tag">Narrative</span></div>
         </div>
-        <div class="proj-media"><div class="ph"><span>[ VIDEO LOOP 16:10 ]</span></div></div>
+        <div class="proj-media">
+          <video data-src="media/varisuora.mp4" poster="media/varisuora.jpg" muted loop playsinline preload="none"></video>
+        </div>
       </article>
 
     </div>
@@ -480,37 +505,15 @@ const io = new IntersectionObserver(es=>es.forEach(e=>{
 }),{threshold:.12});
 document.querySelectorAll('.rv').forEach(e=>io.observe(e));
 
-/* ---- hero: flow field (placeholder for the real video loop) ---- */
-const c = document.getElementById('flow'), x = c.getContext('2d');
-let W,H,P=[];
-const R = (a,b)=>a+Math.random()*(b-a);
-function size(){
-  W=c.width=innerWidth*devicePixelRatio; H=c.height=innerHeight*devicePixelRatio;
-  P=[]; const n = innerWidth<700?420:1100;
-  for(let i=0;i<n;i++)P.push({x:R(0,W),y:R(0,H),v:R(.4,1.6),l:R(0,260)});
-}
-size(); addEventListener('resize',size);
-let t=0;
-function field(px,py){
-  const s=.0016;
-  return Math.sin(px*s+t)*1.6 + Math.cos(py*s*1.3-t*.7)*1.6 + Math.sin((px+py)*s*.5+t*.4)*1.2;
-}
-(function loop(){
-  x.fillStyle='rgba(10,10,11,.055)'; x.fillRect(0,0,W,H);
-  x.lineWidth=1.1*devicePixelRatio;
-  for(const p of P){
-    const a=field(p.x,p.y);
-    const nx=p.x+Math.cos(a)*p.v*2.4*devicePixelRatio;
-    const ny=p.y+Math.sin(a)*p.v*2.4*devicePixelRatio;
-    const hue = 18 + (p.y/H)*250;
-    x.strokeStyle=`hsla(${hue},95%,62%,.22)`;
-    x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(nx,ny); x.stroke();
-    p.x=nx; p.y=ny; p.l--;
-    if(p.l<0||p.x<0||p.x>W||p.y<0||p.y>H){p.x=R(0,W);p.y=R(0,H);p.l=R(60,260)}
-  }
-  t+=.0022;
-  requestAnimationFrame(loop);
-})();
+/* ---- lataa korttivideot vasta kun ne tulevat nakyviin ---- */
+const vio = new IntersectionObserver(es=>es.forEach(e=>{
+  const v = e.target;
+  if(e.isIntersecting){
+    if(!v.src && v.dataset.src) v.src = v.dataset.src;
+    v.play().catch(()=>{});
+  } else { v.pause(); }
+}),{rootMargin:'300px 0px'});
+document.querySelectorAll('video[data-src]').forEach(v=>vio.observe(v));
 </script>
 </body>
 </html>
