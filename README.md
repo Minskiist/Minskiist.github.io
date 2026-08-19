@@ -2,7 +2,7 @@
 
 Portfolio site for **Minna Purkunen** — real-time interactive audiovisual systems.
 
-Live at **https://minskiist.github.io**
+Live at **https://minnapurkunen.com**
 
 ## Structure
 
