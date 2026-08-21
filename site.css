@@ -228,3 +228,8 @@ body.locked{overflow:hidden}
   .hud-h{min-height:44px}
   #hud-t{padding:12px 4px 12px 12px;font-size:16px}
 }
+
+@media (hover:none){
+  body.past-hero .hud{opacity:0;pointer-events:none;transform:translateY(8px)}
+  .hud{transition:opacity .35s,transform .35s}
+}

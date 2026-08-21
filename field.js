@@ -46,7 +46,7 @@ addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ---------- webcam motion ---------- */
-let vid, mctx, prev = null, mw = coarse ? 48 : 64, mh = coarse ? 36 : 48, monctx;
+let vid, camStream = null, mctx, prev = null, mw = coarse ? 48 : 64, mh = coarse ? 36 : 48, monctx;
 if (hud.mon) { hud.mon.width = mw; hud.mon.height = mh; monctx = hud.mon.getContext('2d'); }
 async function enableCam() {
   try {
@@ -62,15 +62,10 @@ async function enableCam() {
     document.body.appendChild(vid);
     await vid.play();
     const c = document.createElement('canvas'); c.width = mw; c.height = mh; mctx = c.getContext('2d', { willReadFrequently: true });
+    camStream = stream;
     state.cam = true; state.src = 'camera';
     hud.btn.textContent = 'camera live · disable';
-    hud.btn.onclick = () => {
-      stream.getTracks().forEach(t => t.stop());
-      state.cam = false; prev = null; state.src = coarse ? 'touch' : 'pointer';
-      if (vid) { vid.srcObject = null; vid.remove(); vid = null; }
-      hud.btn.textContent = 'enable camera'; hud.btn.onclick = enableCam;
-      if (monctx) monctx.clearRect(0, 0, mw, mh);
-    };
+    hud.btn.onclick = () => stopCam('manual');
   } catch (err) {
     if (vid) { vid.remove(); vid = null; }
     hud.btn.textContent = 'camera denied';
@@ -78,6 +73,20 @@ async function enableCam() {
   }
 }
 if (hud.btn) hud.btn.onclick = enableCam;
+
+/* the camera is a hero-only instrument: scrolling past it releases the device */
+function stopCam(reason) {
+  if (!state.cam) return;
+  if (camStream) camStream.getTracks().forEach(t => t.stop());
+  camStream = null;
+  state.cam = false; prev = null; state.src = coarse ? 'touch' : 'pointer';
+  if (vid) { vid.srcObject = null; vid.remove(); vid = null; }
+  if (monctx) monctx.clearRect(0, 0, mw, mh);
+  if (hud.btn) {
+    hud.btn.textContent = reason === 'scroll' ? 'camera released · re-enable' : 'enable camera';
+    hud.btn.onclick = enableCam;
+  }
+}
 
 function readMotion() {
   if (!state.cam || !vid || vid.readyState < 2 || !mctx) return;
@@ -173,7 +182,11 @@ resize(true);
 
 /* don't burn GPU while the hero is off screen or the tab is hidden */
 if ('IntersectionObserver' in window) {
-  new IntersectionObserver(es => { state.vis = es[0].isIntersecting; }, { rootMargin: '120px' }).observe(cv);
+  new IntersectionObserver(es => {
+    state.vis = es[0].isIntersecting;
+    /* below the hero there is nothing for the field to drive, so release the camera too */
+    if (!state.vis) stopCam('scroll');
+  }, { rootMargin: '120px' }).observe(cv);
 }
 addEventListener('visibilitychange', () => { if (document.hidden) state.vis = false; });
 
