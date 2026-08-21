@@ -67,7 +67,7 @@ header{position:relative;min-height:100svh;display:flex;align-items:flex-end;ove
 .hero-media video{width:100%;height:100%;object-fit:cover;opacity:.34;filter:grayscale(.5) contrast(1.12)}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 3%,rgba(7,7,10,.55) 48%,rgba(7,7,10,.82) 100%)}
 #field{position:absolute;inset:0;z-index:1;width:100%;height:100%;mix-blend-mode:screen}
-.hero-in{position:relative;z-index:3;width:100%;padding:150px 0 clamp(46px,6vw,80px)}
+.hero-in{position:relative;z-index:3;width:100%;padding:150px var(--pad) clamp(46px,6vw,80px)}
 .eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:30px}
 .hero-in h1{font-size:clamp(2.5rem,7.2vw,6.6rem);max-width:18ch;margin-top:4px}
 .hero-sub{margin-top:28px;max-width:56ch;color:#B4B1BE;font-size:14.5px;line-height:1.9}
@@ -168,3 +168,39 @@ footer{border-top:1px solid var(--line);margin-top:clamp(60px,8vw,110px);padding
 .hud{transition:opacity .4s}
 .step:hover::before,.tl-item:hover::before{background:var(--acc)}
 @media (prefers-reduced-motion: reduce){.ticker div{animation:none}.rv{opacity:1;transform:none;transition:none}.led{animation:none}html{scroll-behavior:auto}}
+
+
+/* ================= touch / mobile ================= */
+/* 1. hover-only reveals get a class-based twin, triggered when a card scrolls in */
+.proj.act .pnum{-webkit-text-stroke-color:var(--acc);color:rgba(232,255,58,.07)}
+.proj.act .pmedia video,.proj.act .pmedia img{filter:none}
+.proj.act .pmeta span{opacity:1;transform:none}
+.proj.act .tag:last-child{border-color:var(--acc);color:var(--acc)}
+.cap.act{background:var(--bg2)}
+.cap.act::after{width:100%}
+.step.act::before,.tl-item.act::before{background:var(--acc)}
+
+/* 2. drop the compositing-heavy layers where they cost the most */
+@media (hover:none){
+  #field{mix-blend-mode:normal;opacity:.9}
+  body::after{mix-blend-mode:normal;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
+  nav{background:rgba(7,7,10,.88);backdrop-filter:none}
+  nav.stuck{background:rgba(7,7,10,.96)}
+  .hud{backdrop-filter:none;background:rgba(7,7,10,.94)}
+  .proj{cursor:default;transition:none}
+  .pmedia video,.pmedia img{transition:filter .5s}
+  .hero-media video{filter:grayscale(.5) contrast(1.12)}
+}
+
+/* 3. HUD collapses to a tappable chip */
+#hud-t{display:none}
+@media (hover:none),(max-width:900px){
+  .hud{width:auto;max-width:calc(100vw - 24px);right:12px;bottom:12px}
+  .hud-h{gap:10px;padding:9px 11px}
+  #hud-t{display:block;width:auto;background:none;border:0;border-top:0;color:var(--acc);font-family:var(--mono);font-size:14px;line-height:1;padding:0 0 0 4px;cursor:pointer}
+  .hud:not(.open) .hud-row,.hud:not(.open) .bar,.hud:not(.open) #mon,.hud:not(.open) button:not(#hud-t){display:none}
+  .hud.open{width:186px}
+  .hud.open #mon{display:block}
+  .hud .led{flex:0 0 auto}
+}
+@media (hover:none){.hud-row,.hud .bar{font-size:10px}}
