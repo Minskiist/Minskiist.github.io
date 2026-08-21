@@ -77,9 +77,9 @@ if (panel && tog) {
   tog.onclick = () => open(!panel.classList.contains('open'));
 }
 
-/* the monitor belongs to the hero — on phones it gets out of the way after it */
+/* the monitor belongs to the hero — past it, on every device, it gets out of the way */
 const header = document.querySelector('header');
-if (header && coarse && 'IntersectionObserver' in window) {
+if (header && 'IntersectionObserver' in window) {
   new IntersectionObserver(es => {
     document.body.classList.toggle('past-hero', !es[0].isIntersecting);
   }, { rootMargin: '0px 0px -40% 0px' }).observe(header);
