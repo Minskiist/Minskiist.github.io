@@ -77,6 +77,21 @@ if (panel && tog) {
   tog.onclick = () => open(!panel.classList.contains('open'));
 }
 
+/* mobile menu */
+const menu = document.getElementById('menu'), mt = document.getElementById('menu-t');
+if (menu && mt) {
+  const openMenu = o => {
+    menu.hidden = !o;
+    mt.setAttribute('aria-expanded', String(o));
+    document.body.classList.toggle('locked', o);
+  };
+  mt.onclick = () => openMenu(menu.hidden);
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => openMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) openMenu(false); });
+  /* a rotation into desktop width leaves the panel stranded over the page */
+  addEventListener('resize', () => { if (innerWidth > 900 && matchMedia('(hover:hover)').matches) openMenu(false); }, { passive: true });
+}
+
 const t = document.querySelector('.ticker div');
 if (t) t.innerHTML += t.innerHTML;
 })();

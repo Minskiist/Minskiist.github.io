@@ -204,3 +204,27 @@ footer{border-top:1px solid var(--line);margin-top:clamp(60px,8vw,110px);padding
   .hud .led{flex:0 0 auto}
 }
 @media (hover:none){.hud-row,.hud .bar{font-size:10px}}
+
+
+/* ================= mobile menu ================= */
+.nav-r{display:flex;align-items:center;gap:10px}
+.menu-t{display:none;background:none;border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:0 14px;min-height:38px;cursor:pointer}
+.menu-t[aria-expanded="true"]{background:var(--acc);border-color:var(--acc);color:#07070A}
+.menu{position:fixed;inset:0;z-index:49;background:rgba(7,7,10,.98);display:flex;flex-direction:column;justify-content:center;gap:2px;padding:96px var(--pad) 40px;overflow-y:auto;overscroll-behavior:contain}
+.menu[hidden]{display:none}
+.menu>a{display:flex;align-items:baseline;gap:16px;font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,9vw,2.6rem);letter-spacing:-.035em;line-height:1;padding:14px 0;border-bottom:1px solid var(--line2)}
+.menu>a .mn{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.28em;color:var(--acc)}
+.menu>a:active{color:var(--acc)}
+.menu-c{margin-top:34px;padding-top:22px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.menu-c .btn{padding:16px 22px;font-size:11px;max-width:100%;overflow-wrap:anywhere}
+.menu-l{display:flex;gap:8px;flex-wrap:wrap}
+.menu-l a{border:1px solid var(--line);padding:12px 18px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+body.locked{overflow:hidden}
+@media (hover:none),(max-width:900px){
+  .menu-t{display:block}
+  /* the monitor chip and the menu must not fight for the same corner */
+  .menu:not([hidden])~.hud,body.locked .hud{display:none}
+  /* 44px tap target for the monitor toggle */
+  .hud-h{min-height:44px}
+  #hud-t{padding:12px 4px 12px 12px;font-size:16px}
+}

@@ -56,7 +56,10 @@ async function enableCam() {
       audio: false
     });
     vid = document.createElement('video');
-    vid.srcObject = stream; vid.muted = true; vid.playsInline = true; vid.setAttribute('playsinline', '');
+    vid.srcObject = stream; vid.muted = true; vid.playsInline = true;
+    vid.setAttribute('playsinline', ''); vid.setAttribute('muted', ''); vid.autoplay = true;
+    vid.style.cssText = 'position:fixed;left:-2px;top:-2px;width:1px;height:1px;opacity:.01;pointer-events:none';
+    document.body.appendChild(vid);
     await vid.play();
     const c = document.createElement('canvas'); c.width = mw; c.height = mh; mctx = c.getContext('2d', { willReadFrequently: true });
     state.cam = true; state.src = 'camera';
@@ -64,10 +67,12 @@ async function enableCam() {
     hud.btn.onclick = () => {
       stream.getTracks().forEach(t => t.stop());
       state.cam = false; prev = null; state.src = coarse ? 'touch' : 'pointer';
+      if (vid) { vid.srcObject = null; vid.remove(); vid = null; }
       hud.btn.textContent = 'enable camera'; hud.btn.onclick = enableCam;
       if (monctx) monctx.clearRect(0, 0, mw, mh);
     };
   } catch (err) {
+    if (vid) { vid.remove(); vid = null; }
     hud.btn.textContent = 'camera denied';
     setTimeout(() => { hud.btn.textContent = 'enable camera'; }, 2600);
   }
@@ -75,7 +80,8 @@ async function enableCam() {
 if (hud.btn) hud.btn.onclick = enableCam;
 
 function readMotion() {
-  if (!state.cam || !vid || vid.readyState < 2) return;
+  if (!state.cam || !vid || vid.readyState < 2 || !mctx) return;
+  try {
   mctx.drawImage(vid, 0, 0, mw, mh);
   const cur = mctx.getImageData(0, 0, mw, mh);
   if (prev) {
@@ -93,6 +99,7 @@ function readMotion() {
     if (wsum > 24) { state.tx = 1 - (wx / wsum) / mw; state.ty = (wy / wsum) / mh; }
   }
   prev = cur.data.slice(0);
+  } catch (e) { prev = null; }
 }
 
 /* ---------- GL ---------- */
@@ -170,6 +177,9 @@ if ('IntersectionObserver' in window) {
 }
 addEventListener('visibilitychange', () => { if (document.hidden) state.vis = false; });
 
+const panel = document.querySelector('.hud');
+const panelOpen = () => !!panel && panel.classList.contains('open');
+
 let last = performance.now(), fps = 60, acc = 0, frames = 0, tick = 0;
 function frame(now) {
   requestAnimationFrame(frame);
@@ -208,14 +218,14 @@ function frame(now) {
   gl.drawArrays(gl.POINTS, 0, COLS * ROWS);
 
   /* HUD text is DOM work — only when the panel can actually be seen */
-  if (hud.src && (!coarse || document.querySelector('.hud.open')) && tick % 3 === 0) {
-    hud.src.textContent = state.cam ? 'camera' : state.src;
-    hud.x.textContent = state.px.toFixed(3);
-    hud.y.textContent = state.py.toFixed(3);
-    hud.e.textContent = state.energy.toFixed(3);
-    hud.fps.textContent = fps;
-    hud.scroll.textContent = state.scroll.toFixed(3);
-    hud.bar.style.width = (state.energy * 100).toFixed(1) + '%';
+  if (tick % 3 === 0 && (!coarse || panelOpen())) {
+    if (hud.src) hud.src.textContent = state.cam ? 'camera' : state.src;
+    if (hud.x) hud.x.textContent = state.px.toFixed(3);
+    if (hud.y) hud.y.textContent = state.py.toFixed(3);
+    if (hud.e) hud.e.textContent = state.energy.toFixed(3);
+    if (hud.fps) hud.fps.textContent = fps;
+    if (hud.scroll) hud.scroll.textContent = state.scroll.toFixed(3);
+    if (hud.bar) hud.bar.style.width = (state.energy * 100).toFixed(1) + '%';
   }
 }
 requestAnimationFrame(frame);
